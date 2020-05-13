@@ -1,6 +1,5 @@
 package com.example.farmapplication.ui.register
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
