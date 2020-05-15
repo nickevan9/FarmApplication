@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">FarmApplication</string>
     <string name="farm_item">farm item</string>
+
+    <string name="err_username_validation">Tài khoản không được để trống</string>
+    <string name="err_password_validation">Mật khẩu ít nhất 8 ký tự</string>
+    <string name="northern">Miền Bắc</string>
+    <string name="central">Miền Trung</string>
+    <string name="southward">Miền Nam</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_item">Add item</string>
 </resources>

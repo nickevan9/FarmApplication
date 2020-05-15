@@ -2,11 +2,13 @@ package com.example.farmapplication.data.model
 
 import com.google.gson.annotations.SerializedName
 import io.objectbox.annotation.Entity
+import io.objectbox.annotation.Id
 
 @Entity
 data class FarmEntity(
+    @Id
     @SerializedName("")
-    val id: Int,
+    var id: Long = 0,
 
     @SerializedName("")
     val name: String,
@@ -15,5 +17,9 @@ data class FarmEntity(
     val imagePath: String,
 
     @SerializedName("")
-    val description: String
+    val description: String,
+
+    @SerializedName("")
+    val region: Int
+
 )

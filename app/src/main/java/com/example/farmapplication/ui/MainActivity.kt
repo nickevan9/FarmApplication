@@ -1,9 +1,10 @@
-package com.example.farmapplication
+package com.example.farmapplication.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.calculator.scientific.calculatrice.extension.toast
+import com.example.farmapplication.R
 import com.example.farmapplication.helper.NetworkConnection
 
 class MainActivity : AppCompatActivity() {
