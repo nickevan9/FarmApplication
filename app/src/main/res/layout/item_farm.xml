@@ -15,7 +15,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/plant_item_image"
+            android:id="@+id/farm_item_image"
             android:layout_width="0dp"
             android:layout_height="@dimen/_94sdp"
             android:scaleType="centerCrop"
@@ -25,7 +25,7 @@
             android:contentDescription="@string/farm_item" />
 
         <TextView
-            android:id="@+id/plant_item_title"
+            android:id="@+id/farm_item_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_16sdp"
@@ -34,7 +34,7 @@
             android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/plant_item_image"
+            app:layout_constraintTop_toBottomOf="@id/farm_item_image"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="Tomato"/>
 

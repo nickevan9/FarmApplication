@@ -1,2 +1,2 @@
 rootProject.name='FarmApplication'
-include ':app', ':netvietads-release'
+include ':app'

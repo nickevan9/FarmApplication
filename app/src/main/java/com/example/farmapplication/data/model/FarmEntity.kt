@@ -1,10 +1,13 @@
 package com.example.farmapplication.data.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
+import kotlinx.android.parcel.Parcelize
 
 @Entity
+@Parcelize
 data class FarmEntity(
     @Id
     @SerializedName("")
@@ -22,4 +25,4 @@ data class FarmEntity(
     @SerializedName("")
     val region: Int
 
-)
+): Parcelable
