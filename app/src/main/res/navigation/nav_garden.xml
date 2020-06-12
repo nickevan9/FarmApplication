@@ -71,6 +71,9 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             />
+        <action
+            android:id="@+id/action_homeFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
@@ -81,4 +84,8 @@
             android:name="FARM_ENTITY"
             app:argType="com.example.farmapplication.data.model.FarmEntity" />
     </fragment>
+    <fragment
+        android:id="@+id/addItemFragment"
+        android:name="com.example.farmapplication.ui.additem.AddItemFragment"
+        android:label="AddItemFragment" />
 </navigation>

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.farmapplication.R
 import com.example.farmapplication.data.model.FarmEntity
 import com.example.farmapplication.data.model.FarmEntity_
@@ -76,6 +77,10 @@ class HomeFragment : Fragment() {
             tab.setIcon(getTabIcon(position))
             tab.text = getTabTitle(position)
         }.attach()
+
+        fab_add.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addItemFragment)
+        }
     }
 
     private fun getTabIcon(position: Int): Int {
