@@ -18,4 +18,5 @@
     <string name="watering_needs_prefix">Watering needs</string>
     <string name="share_text_plant" ></string>
     <string name="menu_item_share_plant">share</string>
+    <string name="menu_item_add_plant" >Apply</string>
 </resources>
