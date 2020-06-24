@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -13,11 +14,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
+import com.calculator.scientific.calculatrice.extension.getFileName
+import com.calculator.scientific.calculatrice.extension.getImageUri
 import com.example.farmapplication.R
+import com.example.farmapplication.data.remote.RetrofitBuilder
+import com.example.farmapplication.data.repository.media.MediaRepository
+import com.example.farmapplication.extension.snackbar
+import com.example.farmapplication.helper.UploadRequestBody
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -25,19 +30,25 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.fragment_add_item.*
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 
-class AddItemFragment : Fragment() {
+class AddItemFragment : Fragment(), UploadRequestBody.UploadCallback {
 
     private val GALLERY = 1
     private val CAMERA = 2
+
+    private var selectedImageUri: Uri? = null
+
     companion object {
-        fun newInstance() = AddItemFragment()
         private val IMAGE_DIRECTORY = "/nongsan"
     }
 
@@ -53,41 +64,28 @@ class AddItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initToolbar()
-
         var isToolbarShown = false
-        plant_add_scrollview.setOnScrollChangeListener(
-            NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
-
-                // User scrolled past image to height of toolbar and the title text is
-                // underneath the toolbar, so the toolbar should be shown.
-                val shouldShowToolbar = scrollY > toolbar.height
-
-                // The new state of the toolbar differs from the previous state; update
-                // appbar and toolbar attributes.
-                if (isToolbarShown != shouldShowToolbar) {
-                    isToolbarShown = shouldShowToolbar
-
-                    // Use shadow animator to add elevation if toolbar is shown
-                    appbar.isActivated = shouldShowToolbar
-
-                    // Show the plant name if toolbar is shown
-                    toolbar_layout.isTitleEnabled = shouldShowToolbar
-                }
-            }
-        )
 
         img_take_picture.setOnClickListener {
             showPictureDialog()
+        }
+
+        btn_upload.setOnClickListener {
+            if (ed_name_product.text!!.isNotEmpty() && ed_description.text!!.isNotEmpty()) {
+                uploadImage()
+            } else {
+                layout_root.snackbar("Điền đầy đủ thông tin vào các trường")
+            }
         }
 
     }
 
     private fun showPictureDialog() {
         val pictureDialog = AlertDialog.Builder(requireContext())
-        pictureDialog.setTitle("Select Action")
-        val pictureDialogItems = arrayOf("Select image from gallery", "Capture photo from camera")
-        pictureDialog.setItems(pictureDialogItems
+        pictureDialog.setTitle("Chọn phương thức")
+        val pictureDialogItems = arrayOf("Chọn hình ảnh từ album", "Chụp từ máy ảnh")
+        pictureDialog.setItems(
+            pictureDialogItems
         ) { dialog, which ->
             when (which) {
                 0 -> chooseImageFromGallery()
@@ -98,7 +96,7 @@ class AddItemFragment : Fragment() {
     }
 
     private fun chooseImageFromGallery() {
-        val galleryIntent = Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(galleryIntent, GALLERY)
     }
 
@@ -124,62 +122,61 @@ class AddItemFragment : Fragment() {
     }
 
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == GALLERY)
-        {
-            if (data != null)
-            {
-                val contentURI = data.data
+        if (requestCode == GALLERY) {
+            if (data != null) {
+                selectedImageUri = data.data
                 try {
-                    val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, contentURI)
+                    val bitmap = MediaStore.Images.Media.getBitmap(
+                        requireContext().contentResolver,
+                        selectedImageUri
+                    )
                     saveImage(bitmap)
                     Toast.makeText(requireContext(), "Image Show!", Toast.LENGTH_SHORT).show()
                     detail_image.setImageBitmap(bitmap)
-                }
-                catch (e: IOException)
-                {
+                } catch (e: IOException) {
                     e.printStackTrace()
                     Toast.makeText(requireContext(), "Failed", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-        else if (requestCode == CAMERA)
-        {
+        } else if (requestCode == CAMERA) {
             val thumbnail = data!!.extras!!.get("data") as Bitmap
+            selectedImageUri = thumbnail.getImageUri(requireContext())
             detail_image.setImageBitmap(thumbnail)
             saveImage(thumbnail)
             Toast.makeText(requireContext(), "Photo Show!", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun saveImage(myBitmap: Bitmap):String {
+    private fun saveImage(myBitmap: Bitmap): String {
         val bytes = ByteArrayOutputStream()
         myBitmap.compress(Bitmap.CompressFormat.PNG, 90, bytes)
-        val wallpaperDirectory = File (
-            (Environment.getExternalStorageDirectory()).toString() + IMAGE_DIRECTORY)
-        Log.d("fee", wallpaperDirectory.toString())
-        if (!wallpaperDirectory.exists())
-        {
+        val wallpaperDirectory = File(
+            (Environment.getExternalStorageDirectory()).toString() + IMAGE_DIRECTORY
+        )
+        if (!wallpaperDirectory.exists()) {
             wallpaperDirectory.mkdirs()
         }
-        try
-        {
-            Log.d("heel", wallpaperDirectory.toString())
-            val f = File(wallpaperDirectory, ((Calendar.getInstance()
-                .timeInMillis).toString() + ".png"))
+        try {
+            val f = File(
+                wallpaperDirectory, ((Calendar.getInstance()
+                    .timeInMillis).toString() + ".png")
+            )
             f.createNewFile()
             val fo = FileOutputStream(f)
             fo.write(bytes.toByteArray())
-            MediaScannerConnection.scanFile(requireContext(), arrayOf(f.path), arrayOf("image/png"), null)
+            MediaScannerConnection.scanFile(
+                requireContext(),
+                arrayOf(f.path),
+                arrayOf("image/png"),
+                null
+            )
             fo.close()
-            Log.d("TAG", "File Saved::--->" + f.absolutePath)
 
             return f.absolutePath
-        }
-        catch (e1: IOException){
+        } catch (e1: IOException) {
             e1.printStackTrace()
         }
         return ""
@@ -191,10 +188,76 @@ class AddItemFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
-    private fun initToolbar() {
-        toolbar.setNavigationOnClickListener { view ->
-            view.findNavController().navigateUp()
+
+    private fun uploadImage() {
+        if (selectedImageUri == null) {
+            layout_root.snackbar("Select an Image First")
+            return
         }
+
+        val sdf = SimpleDateFormat("hh:mm:ss dd/MM/yyyy",Locale.getDefault())
+        val currentDate = sdf.format(Date())
+
+        val parcelFileDescriptor =
+            requireContext().contentResolver.openFileDescriptor(selectedImageUri!!, "r", null)
+                ?: return
+
+        val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+        val file = File(
+            requireContext().cacheDir,
+            requireContext().contentResolver.getFileName(selectedImageUri!!)
+        )
+        val outputStream = FileOutputStream(file)
+        inputStream.copyTo(outputStream)
+
+        progress_bar.progress = 0
+        val body = UploadRequestBody(file, "file", this)
+
+
+        RetrofitBuilder.apiService.uploadFile(
+            MultipartBody.Part.createFormData(
+                "file",
+                file.name,
+                body
+            ),
+            RequestBody.create(
+                MediaType.parse("multipart/form-data"),
+                ed_name_product.text.toString()
+            ),
+            RequestBody.create(MediaType.parse("multipart/form-data"), currentDate),
+            RequestBody.create(
+                MediaType.parse("multipart/form-data"),
+                ed_description.text.toString()
+            )
+        ).enqueue(object : Callback<MediaRepository> {
+            override fun onFailure(call: Call<MediaRepository>, t: Throwable) {
+                Log.d("AddItemFragment", "onFailure: $t")
+                layout_root.snackbar(t.message!!)
+                progress_bar.progress = 0
+                btn_upload.text = "Tải lên thất bại"
+                btn_upload.isEnabled = false
+
+            }
+
+            override fun onResponse(
+                call: Call<MediaRepository>,
+                response: Response<MediaRepository>
+            ) {
+                response.body()?.let {
+                    Log.d("AddItemFragment", "onResponse: $it")
+                    layout_root.snackbar(it.date)
+                    progress_bar.progress = 100
+                    btn_upload.text = "Tải lên thành công"
+                    btn_upload.isEnabled = false
+                }
+            }
+        })
+
     }
+
+    override fun onProgressUpdate(percentage: Int) {
+        progress_bar.progress = percentage
+    }
+
 
 }

@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitBuilder {
 
-    private const val BASE_URL = "http://172.19.200.197:8001/"
+    private const val BASE_URL = "https://hoanganhnongsan.com/wp-json/wp/v2/"
     private const val USERNAME = "hoanganh"
     private const val PASSWORD = "lehoanganh"
 

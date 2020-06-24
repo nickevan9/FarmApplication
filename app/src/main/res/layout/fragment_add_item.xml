@@ -1,190 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
     android:fitsSystemWindows="true"
     tools:ignore="MergeRootFrame">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/plant_detail_app_bar_height"
-        android:animateLayoutChanges="true"
-        android:background="?attr/colorSurface"
+
+    <ImageView
+        android:id="@+id/detail_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        android:contentDescription="@string/plant_detail_image_content_description"
         android:fitsSystemWindows="true"
-        android:stateListAnimator="@animator/show_toolbar"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:scaleType="centerCrop"
+        app:layout_collapseMode="parallax"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:collapsedTitleGravity="center"
-            app:collapsedTitleTextAppearance="@style/TextAppearance.Sunflower.Toolbar.Text"
-            app:contentScrim="?attr/colorSurface"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:statusBarScrim="?attr/colorSurface"
-            app:titleEnabled="false"
-            app:toolbarId="@id/toolbar">
+    <ImageView
+        android:id="@+id/img_take_picture"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_baseline_linked_camera"
+        app:layout_constraintBottom_toBottomOf="@+id/detail_image"
+        app:layout_constraintEnd_toEndOf="@+id/detail_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/detail_image" />
 
 
-            <ImageView
-                android:id="@+id/detail_image"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/plant_detail_app_bar_height"
-                android:contentDescription="@string/plant_detail_image_content_description"
-                android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                android:background="@color/colorPrimary"
-                app:layout_collapseMode="parallax" />
-
-            <ImageView
-                android:id="@+id/img_take_picture"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_linked_camera" />
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@android:color/transparent"
-                app:contentInsetStartWithNavigation="0dp"
-                app:layout_collapseMode="pin"
-                app:navigationIcon="@drawable/ic_detail_back"
-                app:titleTextColor="?attr/colorOnSurface" />
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/plant_add_scrollview"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tvl_name_product"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/fab_bottom_padding"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:hint="Tên sản phẩm"
+        android:textColorHint="@color/md_green"
+        app:hintTextColor="@color/md_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline7">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ed_name_product"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/margin_normal">
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:maxLines="1"
+            android:nextFocusDown="@id/ed_password"
+            android:textColor="@color/md_green"
+            android:textColorHint="@color/md_green"
+            android:textSize="@dimen/_14ssp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tvl_name_product"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:hint="Tên sản phẩm"
-                android:textColorHint="@color/md_green"
-                app:hintTextColor="@color/md_green"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+    </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_name_product"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:nextFocusDown="@id/ed_password"
-                    android:textColor="@color/md_green"
-                    android:textColorHint="@color/md_green"
-                    android:textSize="@dimen/_14ssp" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tvl_description"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginEnd="8dp"
+        android:hint="Thông tin cơ bản"
+        android:textColorHint="@color/md_green"
+        app:hintTextColor="@color/md_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvl_name_product">
 
-            </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ed_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:inputType="textCapSentences|textNoSuggestions|textMultiLine"
+            android:maxLines="6"
+            android:minLines="2"
+            android:nextFocusDown="@id/ed_password"
+            android:textColor="@color/md_green"
+            android:textColorHint="@color/md_green"
+            android:textSize="@dimen/_14ssp" />
 
-
-            <RadioGroup
-                android:id="@+id/radio_region"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvl_name_product">
-
-                <RadioButton
-                    android:id="@+id/region_norland"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Miền Bắc"
-                    android:textSize="18sp" />
-
-                <RadioButton
-                    android:id="@+id/radio_central"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Miền Trung"
-                    android:textSize="18sp" />
-
-                <RadioButton
-                    android:id="@+id/radio_south"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Miền Nam"
-                    android:textSize="18sp" />
-            </RadioGroup>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tvl_description"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:hint="Thông tin cơ bản"
-                android:textColorHint="@color/md_green"
-                app:hintTextColor="@color/md_green"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/radio_region">
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="10dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:max="100"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:progress="40" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ed_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
-                    android:minLines="2"
-                    android:maxLines="6"
-                    android:inputType="textCapSentences|textNoSuggestions|textMultiLine"
-                    android:nextFocusDown="@id/ed_password"
-                    android:textColor="@color/md_green"
-                    android:textColorHint="@color/md_green"
-                    android:textSize="@dimen/_14ssp" />
+    <Button
+        android:id="@+id/btn_upload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:text="Tải lên hình ảnh"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.43" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_upload"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                android:layout_margin="@dimen/_8sdp"
-                android:text="Upload"
-                />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.52" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9" />
 
-    </androidx.core.widget.NestedScrollView>
 
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
