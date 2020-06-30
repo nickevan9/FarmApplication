@@ -3,37 +3,32 @@ package com.example.farmapplication.ui.region
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.farmapplication.R
 import com.example.farmapplication.data.model.FarmEntity
+import com.example.farmapplication.extension.beGone
+import com.example.farmapplication.extension.beVisible
 import com.example.farmapplication.ui.adapter.FarmAdapter
-import com.example.farmapplication.ui.home.HomeFragmentDirections
+import com.example.farmapplication.ui.home.HomeViewModel
 import kotlinx.android.synthetic.main.fragment_region.*
 
-/**
- * A simple [Fragment] subclass.
- */
-class RegionFragment : Fragment() {
+class NorthFragment : Fragment() {
 
     private lateinit var farmAdapter: FarmAdapter
-//    private lateinit var navController: NavController
 
-    companion object {
-        private var listFarm = listOf<FarmEntity>()
-        fun newInstance(listData: List<FarmEntity>): RegionFragment {
-            listFarm = listData
-            return RegionFragment()
-        }
-    }
+    private lateinit var viewModel: HomeViewModel
+//    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
+    companion object {
+        fun newInstance(): NorthFragment = NorthFragment()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,9 +39,29 @@ class RegionFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_region, container, false)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+
+        viewModel.getListItem("trai-cay-mien-nam", 2)
+
+        viewModel.mListItemNorth.observe(viewLifecycleOwner, Observer {
+            farmAdapter.submitList(it.listEntity)
+        })
+
+        viewModel.showLoading.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                pb_farm.beVisible()
+            } else {
+                pb_farm.beGone()
+            }
+        })
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        navController = Navigation.findNavController(view)
+
 
         farmAdapter = FarmAdapter(requireContext()) {
 //            val direction = HomeFragmentDirections.actionHomeFragmentToDetailFragment(it)
@@ -57,8 +72,6 @@ class RegionFragment : Fragment() {
             adapter = farmAdapter
             setHasFixedSize(true)
         }
-
-        farmAdapter.submitList(listFarm)
     }
 
 

@@ -9,12 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ShareCompat
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.api.load
 
 import com.example.farmapplication.R
 import com.example.farmapplication.data.model.FarmEntity
+import com.example.farmapplication.extension.beGone
+import com.example.farmapplication.extension.beVisible
+import com.example.farmapplication.ui.home.HomeViewModel
 import kotlinx.android.synthetic.main.fragment_detail.*
 
 
@@ -22,6 +27,7 @@ class DetailFragment : Fragment() {
 
     private val args: DetailFragmentArgs by navArgs()
     private var farmEntity: FarmEntity? = null
+    private lateinit var viewModel: DetailViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,9 +73,34 @@ class DetailFragment : Fragment() {
 
     }
 
-    private fun initView(){
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+
+        viewModel.getDescriptionFarm(farmEntity!!.linkUri)
+
+        viewModel.showLoading.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                pb_detail.beVisible()
+            } else {
+                pb_detail.beGone()
+            }
+        })
+
+        viewModel.mDescriptionFarm.observe(viewLifecycleOwner, Observer {
+            plant_description.text = it
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+
+    }
+
+    private fun initView() {
         plant_detail_name.text = farmEntity?.name
-        plant_description.text = farmEntity?.description
+        plant_detail_price.text = farmEntity?.price
         detail_image.load(farmEntity?.imagePath)
 
     }

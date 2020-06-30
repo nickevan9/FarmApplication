@@ -10,19 +10,14 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class FarmEntity(
     @Id
-    @SerializedName("")
     var id: Long = 0,
 
-    @SerializedName("")
     val name: String,
 
-    @SerializedName("")
     val imagePath: String,
 
-    @SerializedName("")
-    val description: String,
+    val price: String,
 
-    @SerializedName("")
-    val region: Int
+    val linkUri: String
 
-): Parcelable
+) : Parcelable

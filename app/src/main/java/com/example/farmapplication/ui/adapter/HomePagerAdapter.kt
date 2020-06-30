@@ -1,27 +1,43 @@
 package com.example.farmapplication.ui.adapter
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.farmapplication.data.model.FarmEntity
-import com.example.farmapplication.ui.region.RegionFragment
+import com.example.farmapplication.ui.region.CentralFragment
+import com.example.farmapplication.ui.region.NorthFragment
+import com.example.farmapplication.ui.region.SouthFragment
 
 const val NORTHERN = 0
 const val CENTRAL = 1
 const val SOUTHWARD = 2
 
-class HomePagerAdapter(fragment: Fragment, listFarmNorth: List<FarmEntity>, listFarmCentral: List<FarmEntity>, listFarmSouth: List<FarmEntity>) :
-    FragmentStateAdapter(fragment) {
+class HomePagerAdapter(
+    fm: FragmentManager,
+    lifeCycle : Lifecycle
+) :
+    FragmentStateAdapter(fm,lifeCycle) {
 
-    private val tabFragmentCreator: Map<Int, () -> Fragment> = mapOf(
-        NORTHERN to { RegionFragment.newInstance(listFarmNorth) },
-        CENTRAL to { RegionFragment.newInstance(listFarmCentral) },
-        SOUTHWARD to { RegionFragment.newInstance(listFarmSouth) }
-    )
 
-    override fun getItemCount(): Int = tabFragmentCreator.size
+    override fun getItemCount(): Int = 3
 
     override fun createFragment(position: Int): Fragment {
-        return tabFragmentCreator[position]?.invoke() ?: throw IndexOutOfBoundsException()
+        return when (position) {
+            0 -> {
+                SouthFragment.newInstance()
+            }
+            1 -> {
+                CentralFragment.newInstance()
+            }
+
+            2 -> {
+                NorthFragment.newInstance()
+            }
+            else -> {
+                SouthFragment.newInstance()
+            }
+        }
     }
 
 }
