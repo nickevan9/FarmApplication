@@ -1,17 +1,23 @@
 package com.example.farmapplication.ui.region
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.farmapplication.R
 import com.example.farmapplication.extension.beGone
 import com.example.farmapplication.extension.beVisible
+import com.example.farmapplication.helper.runLayoutAnimation
 import com.example.farmapplication.ui.adapter.FarmAdapter
 import com.example.farmapplication.ui.home.HomeViewModel
 import kotlinx.android.synthetic.main.fragment_region.*
+
 
 class SouthFragment : Fragment() {
 
@@ -45,6 +51,7 @@ class SouthFragment : Fragment() {
 
         viewModel.mListItemSouth.observe(viewLifecycleOwner, Observer {
             farmAdapter.submitList(it.listEntity)
+            runLayoutAnimation(rv_farm)
         })
 
         viewModel.showLoading.observe(viewLifecycleOwner, Observer {
@@ -72,6 +79,7 @@ class SouthFragment : Fragment() {
             setHasFixedSize(true)
         }
     }
+
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

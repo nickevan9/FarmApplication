@@ -20,5 +20,6 @@
     <!-- Number of columns for garden and plant list grid -->
     <integer name="grid_columns">2</integer>
     <integer name="slide">300</integer>
+    <integer name="anim_duration_medium">1500</integer>
 
 </resources>

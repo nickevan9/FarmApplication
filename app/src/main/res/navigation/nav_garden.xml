@@ -78,13 +78,15 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
+
             />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.example.farmapplication.ui.detail.DetailFragment"
         android:label="fragment_detail"
-        tools:layout="@layout/fragment_detail" >
+        tools:layout="@layout/fragment_detail"
+        >
         <argument
             android:name="FARM_ENTITY"
             app:argType="com.example.farmapplication.data.model.FarmEntity" />

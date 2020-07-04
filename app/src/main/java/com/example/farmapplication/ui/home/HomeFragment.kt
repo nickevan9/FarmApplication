@@ -27,10 +27,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
 
-    private var listFarmNorth = listOf<FarmEntity>()
-    private var listFarmCentral = listOf<FarmEntity>()
-    private var listFarmSouth = listOf<FarmEntity>()
-
     private var farmQuery: Query<FarmEntity>? = null
     private var farmBox: Box<FarmEntity>? = null
 

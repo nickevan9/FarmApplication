@@ -12,8 +12,10 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.example.farmapplication.R
+import com.example.farmapplication.data.model.UserEntity
 import com.example.farmapplication.data.remote.ApiHelper
 import com.example.farmapplication.data.remote.RetrofitBuilder
+import com.example.farmapplication.extension.snackbar
 import com.example.farmapplication.ui.factory.LoginFactory
 import kotlinx.android.synthetic.main.login_fragment.*
 
@@ -21,10 +23,10 @@ import kotlinx.android.synthetic.main.login_fragment.*
 class LoginFragment : Fragment() {
 
 
-
     private lateinit var viewModel: LoginViewModel
 
     private lateinit var navController: NavController
+    private var mListUser = mutableListOf<UserEntity>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,11 +40,13 @@ class LoginFragment : Fragment() {
 
         navController = Navigation.findNavController(view)
 
+        userMapList()
+
         ed_username.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (s?.length!! > 0){
+                if (s?.length!! > 0) {
                     tvl_username.error = null
-                }else{
+                } else {
                     tvl_username.error = getString(R.string.err_username_validation)
                 }
             }
@@ -58,7 +62,15 @@ class LoginFragment : Fragment() {
         })
 
         btn_login.setOnClickListener {
-            navController.navigate(R.id.action_loginFragment_to_homeFragment)
+
+            val user = UserEntity(ed_username.text.toString(), ed_password.text.toString())
+
+            if (user in mListUser) {
+                navController.navigate(R.id.action_loginFragment_to_homeFragment)
+            }else{
+                constraint_login.snackbar("Tài khoản và mật khẩu không chính xác")
+            }
+
         }
 
     }
@@ -69,6 +81,13 @@ class LoginFragment : Fragment() {
             ViewModelProvider(this, LoginFactory(ApiHelper(RetrofitBuilder.apiService))).get(
                 LoginViewModel::class.java
             )
+    }
+
+    private fun userMapList() {
+        mListUser.add(UserEntity("haudv@gmail.com", ""))
+        mListUser.add(UserEntity("tanhlh520@wru.vn", ""))
+        mListUser.add(UserEntity("vinhlc@gmail.com", ""))
+        mListUser.add(UserEntity("haiqn@gmail.com", ""))
     }
 
 
