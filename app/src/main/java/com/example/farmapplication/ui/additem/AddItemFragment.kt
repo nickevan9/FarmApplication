@@ -24,10 +24,12 @@ import com.example.farmapplication.data.repository.media.MediaRepository
 import com.example.farmapplication.extension.snackbar
 import com.example.farmapplication.helper.UploadRequestBody
 import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.fragment_add_item.*
 import okhttp3.MediaType
@@ -102,23 +104,27 @@ class AddItemFragment : Fragment(), UploadRequestBody.UploadCallback {
 
     private fun takePhotoFromCamera() {
         Dexter.withContext(requireContext())
-            .withPermission(Manifest.permission.CAMERA)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    startActivityForResult(cameraIntent, CAMERA)
-                }
-
-                override fun onPermissionDenied(response: PermissionDeniedResponse) { /* ... */
-                }
+            .withPermissions(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .withListener(object : MultiplePermissionsListener {
 
                 override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest?,
-                    token: PermissionToken?
+                    p0: MutableList<PermissionRequest>?,
+                    p1: PermissionToken?
                 ) {
-
+                    p1!!.continuePermissionRequest()
                 }
-            }).check()
+
+                override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
+                    p0.let {
+                        if(p0!!.areAllPermissionsGranted()){
+                            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                            startActivityForResult(cameraIntent, CAMERA)
+                        }
+                    }
+                }
+            }).withErrorListener {
+                layout_root.snackbar("Cấp quyền lỗi !!!")
+            }.check()
     }
 
 
@@ -142,11 +148,16 @@ class AddItemFragment : Fragment(), UploadRequestBody.UploadCallback {
                 }
             }
         } else if (requestCode == CAMERA) {
-            val thumbnail = data!!.extras!!.get("data") as Bitmap
-            selectedImageUri = thumbnail.getImageUri(requireContext())
-            detail_image.setImageBitmap(thumbnail)
-            saveImage(thumbnail)
-            Toast.makeText(requireContext(), "Photo Show!", Toast.LENGTH_SHORT).show()
+            if (data != null){
+                val thumbnail = data!!.extras!!.get("data") as Bitmap
+                selectedImageUri = thumbnail.getImageUri(requireContext())
+                detail_image.setImageBitmap(thumbnail)
+                saveImage(thumbnail)
+                Toast.makeText(requireContext(), "Photo Show!", Toast.LENGTH_SHORT).show()
+            }else{
+                layout_root.snackbar("Mời chọn lại ảnh !!!")
+            }
+
         }
     }
 
